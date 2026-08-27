@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profe Coto — Consultorías 0800-COTO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --cream: #F7F3FC;
+    --paper: #FDFBFF;
+    --cream-deep: #E4D7F3;
+    --ink: #2A2033;
+    --ink-soft: #6C5D78;
+    --violet-50: #F8F3FD;
+    --violet-100: #EFE3FB;
+    --violet-300: #B48EE0;
+    --violet-500: #7C4DD9;
+    --violet-600: #6D3FC0;
+    --violet-700: #5A2FB0;
+    --violet-900: #3A1D73;
+    --white: #FFFFFF;
+    --ok-bg: #F1E9FB;
+    --ok-text: #4B2A8A;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 1px 1px, rgba(122,79,197,0.10) 1px, transparent 0) 0 0/22px 22px,
+      var(--cream);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Baloo 2', sans-serif;
+    color:var(--ink);
+    margin:0;
+  }
+  .mono{font-family:'Space Mono', monospace;}
+  .wrap{max-width:740px;margin:0 auto;padding:0 20px;}
+  a{color:var(--violet-700);}
+  ::selection{background:var(--violet-300);color:var(--white);}
+
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, .chip:focus-visible, .slot:focus-visible{
+    outline:2.5px solid var(--violet-500);
+    outline-offset:2px;
+  }
+
+  /* ============ HEADER ============ */
+  header{
+    background:var(--paper);
+    border-bottom:1px solid var(--cream-deep);
+  }
+  .header-inner{
+    padding:20px 20px 17px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    max-width:740px;
+    margin:0 auto;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-badge{
+    width:42px;height:42px;border-radius:12px;
+    background:var(--violet-700);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Baloo 2';font-weight:800;color:var(--white);font-size:19px;
+    box-shadow:0 3px 0 var(--violet-900);
+    flex-shrink:0;
+  }
+  .brand-text .name{font-size:19px;font-weight:700;line-height:1.1;}
+  .brand-text .sub{font-size:12px;color:var(--ink-soft);font-weight:500;letter-spacing:.01em;}
+  .coord-link{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--violet-700);
+    background:var(--violet-100);
+    padding:8px 14px;
+    border-radius:20px;
+    border:none;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .coord-link:hover{background:var(--violet-300);color:var(--white);}
+
+  main{padding:36px 0 64px;}
+
+  /* ============ HERO ============ */
+  .hero{padding:6px 0 6px;text-align:center;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--violet-700);
+    background:var(--violet-100);
+    padding:7px 13px 7px 10px;border-radius:20px;
+    margin-bottom:18px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--violet-500);}
+  .hero h1{
+    font-size:clamp(30px,6.4vw,42px);
+    font-weight:800;
+    line-height:1.12;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 .mark{
+    position:relative;
+    color:var(--violet-700);
+    white-space:nowrap;
+  }
+  .hero h1 .mark::after{
+    content:"";
+    position:absolute;
+    left:-2%;right:-2%;bottom:2px;
+    height:0.34em;
+    background:var(--violet-100);
+    z-index:-1;
+    border-radius:3px;
+  }
+  .hero p{color:var(--ink-soft);font-size:16px;margin-top:14px;max-width:460px;margin-left:auto;margin-right:auto;}
+
+  /* ============ TICKET (signature element) ============ */
+  .ticket-wrap{margin:30px 0 6px;}
+  .ticket{
+    position:relative;
+    background:var(--white);
+    border-radius:20px;
+    display:flex;
+    align-items:stretch;
+    box-shadow:0 12px 0 -6px var(--cream-deep), 0 12px 26px rgba(90,47,176,0.10);
+  }
+  .ticket-stub{
+    flex:0 0 108px;
+    background:var(--violet-700);
+    color:var(--white);
+    border-radius:20px 0 0 20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:16px 8px;
+    text-align:center;
+  }
+  .ticket-stub .stub-label{font-size:10px;letter-spacing:.12em;font-weight:700;opacity:.75;text-transform:uppercase;}
+  .ticket-stub .stub-number{font-size:22px;font-weight:700;margin-top:4px;}
+  .ticket-divider{
+    position:relative;
+    width:0;
+    border-left:2px dashed var(--violet-100);
+    margin:14px 0;
+  }
+  .ticket-divider::before, .ticket-divider::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:20px;height:20px;
+    border-radius:50%;
+    background:var(--cream);
+  }
+  .ticket-divider::before{top:-14px;}
+  .ticket-divider::after{bottom:-14px;}
+  .ticket-main{
+    flex:1;
+    padding:18px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .ticket-main .label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:700;margin-bottom:3px;}
+  .ticket-main .date{font-family:'Baloo 2';font-size:21px;font-weight:700;text-transform:capitalize;}
+  .ticket-main .countdown{
+    font-size:12.5px;font-weight:700;color:var(--violet-700);
+    background:var(--violet-100);
+    padding:7px 13px;border-radius:14px;
+    white-space:nowrap;
+  }
+
+  /* ============ CARDS ============ */
+  .card{
+    background:var(--white);
+    border-radius:20px;
+    padding:26px;
+    margin-top:22px;
+    box-shadow:0 1px 0 var(--cream-deep), 0 10px 24px rgba(60,40,90,0.05);
+  }
+  .card h2{font-size:19px;margin-bottom:4px;}
+  .card .card-sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:18px;}
+  .section-rule{
+    border:none;
+    border-top:1.5px dashed var(--cream-deep);
+    margin:22px 0;
+  }
+  .subhead{
+    font-size:13px;font-weight:700;color:var(--ink);
+    margin:22px 0 4px;
+  }
+  .subhead .n{color:var(--violet-700);}
+
+  /* ============ DATE CHIPS (mini tickets) ============ */
+  .chip-row{
+    display:flex;gap:12px;overflow-x:auto;padding:6px 4px 12px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .chip{
+    position:relative;
+    flex:0 0 auto;
+    background:var(--cream);
+    border-radius:14px;
+    padding:11px 14px 9px;
+    text-align:center;
+    cursor:pointer;
+    min-width:88px;
+    transition:transform .15s ease, background .15s ease;
+    border:1.5px solid transparent;
+  }
+  .chip .d1{font-size:10.5px;color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.02em;}
+  .chip .d2{font-family:'Baloo 2';font-size:19px;font-weight:700;margin:2px 0;}
+  .chip .d3{font-size:10px;color:var(--ink-soft);text-transform:uppercase;}
+  .chip .count{font-size:10px;color:var(--violet-700);font-weight:700;margin-top:4px;min-height:12px;}
+  .chip .count.full{color:#A23A2E;}
+  .chip.selected{
+    border-color:var(--violet-500);
+    background:var(--violet-50);
+    transform:translateY(-3px);
+    box-shadow:0 4px 0 var(--violet-500);
+  }
+
+  /* ============ TIME SLOTS ============ */
+  .slot-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+  }
+  @media (max-width:520px){.slot-grid{grid-template-columns:repeat(2,1fr);}}
+  .slot{
+    padding:11px 6px;
+    border-radius:12px;
+    background:var(--cream);
+    border:1.5px solid transparent;
+    text-align:center;
+    cursor:pointer;
+    font-family:'Space Mono', monospace;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--ink);
+    transition:transform .12s ease, background .12s ease;
+  }
+  .slot .tag{
+    display:block;
+    font-family:'Work Sans';
+    font-size:9.5px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    margin-top:3px;
+    opacity:.75;
+  }
+  .slot.free:hover{background:var(--violet-50);}
+  .slot.selected{
+    border-color:var(--violet-500);
+    background:var(--violet-50);
+    color:var(--violet-700);
+    transform:translateY(-2px);
+    box-shadow:0 3px 0 var(--violet-500);
+  }
+  .slot.taken{
+    background:var(--cream-deep);
+    color:var(--ink-soft);
+    cursor:not-allowed;
+    text-decoration:line-through;
+    opacity:.6;
+  }
+  .slot.loading{opacity:.4;cursor:wait;}
+
+  /* ============ FORM ============ */
+  label{display:block;font-size:13px;font-weight:700;color:var(--ink);margin:16px 0 5px;}
+  label:first-of-type{margin-top:2px;}
+  .hint{font-size:12px;color:var(--ink-soft);font-weight:500;margin-top:-1px;margin-bottom:6px;}
+  input[type="text"], input[type="email"], input[type="url"], input[type="password"], textarea{
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1.5px solid var(--cream-deep);
+    background:var(--cream);
+    font-family:'Work Sans';
+    font-size:15px;
+    color:var(--ink);
+    resize:vertical;
+  }
+  textarea{min-height:78px;line-height:1.4;}
+  input:focus, textarea:focus{outline:2px solid var(--violet-500);outline-offset:1px;background:var(--white);}
+  .field-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:520px){.field-pair{grid-template-columns:1fr;}}
+
+  .invite-note{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    background:var(--violet-50);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-top:14px;
+    font-size:12.5px;
+    color:var(--violet-900);
+    line-height:1.45;
+  }
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--violet-500);
+    color:var(--white);
+    font-family:'Work Sans';
+    font-weight:700;
+    font-size:15px;
+    border:none;
+    padding:14px 22px;
+    border-radius:14px;
+    cursor:pointer;
+    box-shadow:0 4px 0 var(--violet-900);
+    transition:transform .08s ease, filter .1s ease;
+    width:100%;
+    margin-top:22px;
+  }
+  .btn:hover{filter:brightness(1.05);}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--violet-900);}
+  .btn:disabled{background:#D2C4EA;box-shadow:0 4px 0 #BBA9DA;cursor:not-allowed;}
+  .btn.secondary{
+    background:var(--white);
+    color:var(--violet-700);
+    border:1.5px solid var(--violet-500);
+    box-shadow:0 4px 0 var(--violet-100);
+    width:auto;
+  }
+  .btn.small{padding:9px 16px;font-size:13px;margin-top:0;width:auto;box-shadow:0 3px 0 var(--violet-900);}
+
+  .confirm{
+    display:none;
+    text-align:center;
+    padding:18px;
+    border-radius:16px;
+    background:var(--ok-bg);
+    color:var(--ok-text);
+    font-weight:600;
+    margin-top:20px;
+  }
+  .confirm.show{display:block;}
+  .errormsg{
+    display:none;
+    color:#A23A2E;
+    font-size:13px;
+    font-weight:600;
+    margin-top:10px;
+  }
+  .errormsg.show{display:block;}
+
+  footer{
+    text-align:center;
+    padding:30px 20px 44px;
+    color:var(--ink-soft);
+    font-size:12px;
+  }
+  footer .fmark{color:var(--violet-500);}
+
+  /* ============ ADMIN MODAL ============ */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(42,32,51,0.55);
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding:40px 16px;
+    z-index:50;
+    overflow-y:auto;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--cream);
+    border-radius:20px;
+    max-width:640px;
+    width:100%;
+    padding:0;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(42,32,51,0.3);
+  }
+  .modal-header{
+    background:var(--paper);
+    padding:18px 22px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--cream-deep);
+  }
+  .modal-header h3{font-size:16.5px;}
+  .close-btn{
+    background:none;border:none;font-size:22px;color:var(--ink-soft);cursor:pointer;line-height:1;
+  }
+  .modal-body{padding:22px;max-height:70vh;overflow-y:auto;}
+
+  .admin-date-block{
+    background:var(--white);
+    border:1.5px solid var(--cream-deep);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:14px;
+  }
+  .admin-date-block .adhead{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'Baloo 2';font-weight:700;font-size:15px;
+    text-transform:capitalize;
+  }
+  .admin-date-block .adcount{
+    font-size:11.5px;font-weight:700;color:var(--violet-700);
+    background:var(--violet-100);padding:3px 9px;border-radius:12px;
+  }
+  .admin-entry{
+    padding:10px 0;
+    border-top:1px solid var(--cream-deep);
+    font-size:13px;
+  }
+  .admin-entry .row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .admin-entry .who{font-weight:700;}
+  .admin-entry .horario{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    color:var(--violet-700);
+    background:var(--violet-100);
+    padding:2px 8px;
+    border-radius:8px;
+    white-space:nowrap;
+  }
+  .admin-entry .meta{color:var(--ink-soft);font-size:12px;margin-top:4px;line-height:1.5;}
+  .admin-entry .meta b{color:var(--ink);font-weight:600;}
+  .admin-entry .del{
+    background:none;border:none;color:#A23A2E;cursor:pointer;font-size:12px;font-weight:700;flex-shrink:0;
+  }
+  .empty-note{color:var(--ink-soft);font-size:13px;padding:6px 0;}
+
+  .pass-gate{padding:24px 22px;text-align:center;}
+  .pass-gate .gate-note{color:var(--ink-soft);font-size:13px;margin:0 0 14px;}
+  .pass-gate input{max-width:230px;margin:0 auto;text-align:center;}
+  .pass-gate .btn{max-width:230px;margin-left:auto;margin-right:auto;}
+
+  @media (max-width:480px){
+    .ticket{flex-direction:column;}
+    .ticket-stub{
+      flex-direction:row;
+      border-radius:20px 20px 0 0;
+      gap:8px;
+      padding:10px;
+    }
+    .ticket-divider{border-left:none;border-top:2px dashed var(--violet-100);width:auto;margin:0 16px;}
+    .ticket-divider::before, .ticket-divider::after{top:50%;transform:translateY(-50%);}
+    .ticket-divider::before{left:-14px;}
+    .ticket-divider::after{left:auto;right:-14px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-badge">C</div>
+      <div class="brand-text">
+        <div class="name">Profe Coto</div>
+        <div class="sub">Consultorías 0800-COTO</div>
+      </div>
+    </div>
+    <button class="coord-link" id="openAdmin">Coordinadores</button>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> Cada 15 días, los viernes de 15:30 a 19:30</div>
+      <h1>Sacá tu <span class="mark">pase</span><br>a la consultoría 0800-COTO</h1>
+      <p>Elegí la fecha y el horario, contanos qué quieren repasar y quedan anotados. Simple, como sacar número.</p>
+    </section>
+
+    <div id="storageWarning" style="display:none;background:#FBEAEA;color:#A23A2E;border-radius:14px;padding:14px 18px;margin-top:22px;font-size:13.5px;font-weight:600;text-align:center;">
+      ⚠️ No se pudo conectar con la base de datos. Los anotados no se van a guardar. Revisá la conexión o recargá la página.
+    </div>
+
+    <div class="ticket-wrap">
+      <div class="ticket" id="nextCard">
+        <div class="ticket-stub">
+          <div class="stub-label">Pase</div>
+          <div class="stub-number" id="ticketNumber">01</div>
+        </div>
+        <div class="ticket-divider"></div>
+        <div class="ticket-main">
+          <div>
+            <div class="label">Próxima consultoría</div>
+            <div class="date" id="nextDateText">—</div>
+          </div>
+          <div class="countdown" id="nextCountdown">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Elegí fecha y horario</h2>
+      <div class="card-sub">Turnos de 30 minutos, de 15:30 a 19:30. Los tachados ya están tomados.</div>
+      <div class="chip-row" id="chipRow"></div>
+
+      <div class="subhead">Horarios de ese día</div>
+      <div class="slot-grid" id="slotGrid"></div>
+
+      <form id="signupForm">
+        <label for="nombre">Nombre y apellido</label>
+        <input type="text" id="nombre" required placeholder="Ej: Lucía Fernández">
+
+        <label for="tema">¿Qué tema quieren ver en la consultoría?</label>
+        <textarea id="tema" required placeholder="Ej: Ayuda con las ideas, el diseño, el concepto, el board, etc."></textarea>
+
+        <label for="drive">Link de Drive con las piezas que quieran mostrarnos</label>
+        <div class="hint">Opcional. Pegá el link de la carpeta o el archivo.</div>
+        <input type="url" id="drive" placeholder="https://drive.google.com/...">
+
+        <label for="curso">Turno</label>
+        <input type="text" id="curso" required placeholder="Ej: Mañana o Noche">
+
+        <div class="field-pair">
+          <div>
+            <label for="email1">Email integrante 1</label>
+            <input type="email" id="email1" required placeholder="nombre1@mail.com">
+          </div>
+          <div>
+            <label for="email2">Email integrante 2</label>
+            <input type="email" id="email2" required placeholder="nombre2@mail.com">
+          </div>
+        </div>
+        <div class="invite-note">
+          <span>Dejen el email de <b>los dos integrantes de la dupla</b>: a esas dos direcciones les va a llegar la invitación a la reunión.</span>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">Anotarme</button>
+        <div class="errormsg" id="errorMsg">Elegí fecha, horario y completá los campos obligatorios.</div>
+      </form>
+
+      <div class="confirm" id="confirmBox">
+        <div style="font-size:17px;">¡Listo! Nos vemos en la consultoría 🎉</div>
+        <div style="font-weight:500;font-size:13px;margin-top:6px;opacity:.85;">
+          <span id="confirmDate"></span> a las <b id="confirmHorario"></b>. La invitación les llega por mail.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <span class="fmark">Profe Coto</span> · Anotate una vez por consultoría · Ante dudas, escribí por el mail que dejaste en el formulario.
+</footer>
+
+<!-- ADMIN OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Panel de coordinadores</h3>
+      <button class="close-btn" id="closeAdmin" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <div id="passGate" class="pass-gate">
+      <p class="gate-note">Iniciá sesión con el usuario y la contraseña de coordinadores para ver quién se anotó, en qué fecha y horario.</p>
+      <input type="text" id="userInput" placeholder="Usuario" autocomplete="username">
+      <input type="password" id="passInput" placeholder="Contraseña" autocomplete="current-password" style="margin-top:10px;">
+      <div class="errormsg" id="passError">Usuario o contraseña incorrectos.</div>
+      <button class="btn" id="passSubmit">Iniciar sesión</button>
+    </div>
+
+    <div class="modal-body" id="adminBody" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+        <div style="font-size:13px;color:var(--ink-soft);">Sesión de coordinadores</div>
+        <button class="btn small secondary" id="logoutBtn">Cerrar sesión</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <button class="btn small" id="refreshBtn">Actualizar</button>
+        <button class="btn small secondary" id="copyBtn">Copiar lista</button>
+      </div>
+      <div id="adminList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ CONFIG ============
+// Usuario y contraseña compartidos entre todos los coordinadores.
+// Cambialos acá si querés otros.
+const ADMIN_USERNAME = "coordinacion";
+const ADMIN_PASSWORD = "coto2026";
+
+// Notificación por mail (EmailJS).
+const EMAILJS_PUBLIC_KEY = "fxBN58nJ0lFKvpe3H";
+const EMAILJS_SERVICE_ID = "service_gqvxe6i";
+const EMAILJS_TEMPLATE_ID = "template_rlbocxx";
+const NOTIFY_EMAIL = "0800coto@gmail.com";
+const EMAILJS_ENABLED = EMAILJS_PUBLIC_KEY !== "TU_PUBLIC_KEY";
+if(EMAILJS_ENABLED && window.emailjs){ emailjs.init(EMAILJS_PUBLIC_KEY); }
+
+async function sendNotificationEmail(entry, fechaTexto){
+  if(!EMAILJS_ENABLED || !window.emailjs) return;
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      nombre: entry.nombre,
+      curso: entry.curso,
+      tema: entry.tema,
+      drive: entry.drive || "(sin link)",
+      email1: entry.email1,
+      email2: entry.email2,
+      fecha: fechaTexto,
+      horario: entry.horario,
+      to_email: NOTIFY_EMAIL
+    });
+  }catch(err){
+    console.warn("No se pudo enviar el mail de notificación:", err);
+  }
+}
+
+// Primera consultoría y frecuencia (cada 14 días = "una vez sí, una vez no" los viernes)
+const START_DATE = new Date(2026, 7, 28); // 28 de agosto de 2026
+const INTERVAL_DAYS = 14;
+const HOW_MANY_DATES = 10;
+
+// Horarios: turnos de 30 minutos, de 15:30 a 19:30
+const TIME_SLOTS = ["15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00"];
+
+// ============ HELPERS ============
+function addDays(date, days){
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+function isoDate(d){
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function formatLong(d){
+  return d.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
+}
+function formatShort(d){
+  return d.toLocaleDateString("es-AR", { day: "2-digit", month: "short" }).replace(".", "");
+}
+function daysUntil(d){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(d); target.setHours(0,0,0,0);
+  return Math.round((target - today) / 86400000);
+}
+function endOfSlot(start){
+  let [h,m] = start.split(":").map(Number);
+  m += 30;
+  if(m >= 60){ m -= 60; h += 1; }
+  return String(h).padStart(2,"0") + ":" + String(m).padStart(2,"0");
+}
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Build schedule, keep only today-or-future dates for the public list
+const today0 = new Date(); today0.setHours(0,0,0,0);
+let schedule = [];
+for(let i=0;i<HOW_MANY_DATES;i++){
+  schedule.push(addDays(START_DATE, i*INTERVAL_DAYS));
+}
+schedule = schedule.filter(d => d >= today0 || isoDate(d) === isoDate(today0));
+if(schedule.length === 0){
+  let d = addDays(START_DATE, HOW_MANY_DATES*INTERVAL_DAYS);
+  while(schedule.length < 6){
+    if(d >= today0) schedule.push(new Date(d));
+    d = addDays(d, INTERVAL_DAYS);
+  }
+}
+
+let selectedDate = null;
+let selectedHorario = null;
+
+// ============ FIREBASE ============
+const firebaseConfig = {
+  apiKey: "AIzaSyCwkAifJ_PLU9FzKv2WZJfgj7AjWd33z0A",
+  authDomain: "profe-coto.firebaseapp.com",
+  projectId: "profe-coto",
+  storageBucket: "profe-coto.firebasestorage.app",
+  messagingSenderId: "67232381940",
+  appId: "1:67232381940:web:ba75116d02896418b757a1",
+  measurementId: "G-Q85TM1GYKN"
+};
+let db = null;
+try{
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+}catch(e){
+  console.error("No se pudo inicializar Firebase:", e);
+}
+
+// ============ STORAGE HELPERS ============
+// Cada fecha es un documento en la colección "signups", con forma
+// { "15:30": {...entry...}, "16:00": {...} } — solo aparecen los horarios ya tomados.
+async function getSignupsForDate(iso){
+  if(!db) return {};
+  try{
+    const snap = await db.collection("signups").doc(iso).get();
+    return snap.exists ? snap.data() : {};
+  }catch(e){
+    console.error("Error leyendo Firestore:", e);
+    return {};
+  }
+}
+
+// ============ RENDER: next date + chips ============
+function renderNextCard(){
+  const next = schedule[0];
+  document.getElementById("nextDateText").textContent = formatLong(next);
+  const du = daysUntil(next);
+  const label = du === 0 ? "¡Es hoy!" : du === 1 ? "Es mañana" : `Faltan ${du} días`;
+  document.getElementById("nextCountdown").textContent = label;
+}
+
+async function renderChips(){
+  const row = document.getElementById("chipRow");
+  row.innerHTML = "";
+  for(const d of schedule){
+    const iso = isoDate(d);
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.dataset.iso = iso;
+    chip.tabIndex = 0;
+    chip.innerHTML = `
+      <div class="d1">${d.toLocaleDateString("es-AR",{weekday:"short"}).replace(".","")}</div>
+      <div class="d2">${formatShort(d)}</div>
+      <div class="d3">${d.toLocaleDateString("es-AR",{month:"short"}).replace(".","")}</div>
+      <div class="count" data-count-for="${iso}"></div>
+    `;
+    chip.addEventListener("click", () => selectChip(iso));
+    chip.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); selectChip(iso); } });
+    row.appendChild(chip);
+    getSignupsForDate(iso).then(map => {
+      const taken = Object.keys(map).length;
+      const free = TIME_SLOTS.length - taken;
+      const el = row.querySelector(`[data-count-for="${iso}"]`);
+      if(!el) return;
+      if(free === 0){
+        el.textContent = "Completo";
+        el.classList.add("full");
+      }else{
+        el.textContent = `${free} libres`;
+      }
+    });
+  }
+  selectChip(isoDate(schedule[0]));
+}
+
+function selectChip(iso){
+  selectedDate = iso;
+  selectedHorario = null;
+  document.querySelectorAll(".chip").forEach(c => {
+    c.classList.toggle("selected", c.dataset.iso === iso);
+  });
+  document.getElementById("errorMsg").classList.remove("show");
+  renderSlots(iso);
+}
+
+async function renderSlots(iso){
+  const grid = document.getElementById("slotGrid");
+  grid.innerHTML = TIME_SLOTS.map(s => `<div class="slot loading">${s}</div>`).join("");
+  const map = await getSignupsForDate(iso);
+  if(selectedDate !== iso) return; // el usuario cambió de fecha mientras cargaba
+  grid.innerHTML = "";
+  TIME_SLOTS.forEach(slot => {
+    const taken = !!map[slot];
+    const div = document.createElement("div");
+    div.className = "slot " + (taken ? "taken" : "free") + (selectedHorario === slot ? " selected" : "");
+    div.tabIndex = taken ? -1 : 0;
+    div.innerHTML = `${slot}–${endOfSlot(slot)}<span class="tag">${taken ? "Ocupado" : "Libre"}</span>`;
+    if(!taken){
+      div.addEventListener("click", () => selectSlotUI(slot));
+      div.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); selectSlotUI(slot); } });
+    }
+    grid.appendChild(div);
+  });
+}
+
+function selectSlotUI(slot){
+  selectedHorario = slot;
+  document.querySelectorAll(".slot").forEach(el => {
+    const isThis = el.textContent.startsWith(slot);
+    el.classList.toggle("selected", isThis && !el.classList.contains("taken"));
+  });
+  document.getElementById("errorMsg").classList.remove("show");
+}
+
+// ============ FORM SUBMIT ============
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nombre = document.getElementById("nombre").value.trim();
+  const tema = document.getElementById("tema").value.trim();
+  const drive = document.getElementById("drive").value.trim();
+  const curso = document.getElementById("curso").value.trim();
+  const email1 = document.getElementById("email1").value.trim();
+  const email2 = document.getElementById("email2").value.trim();
+  const errorEl = document.getElementById("errorMsg");
+
+  if(!selectedDate || !selectedHorario || !nombre || !tema || !curso || !email1 || !email2){
+    errorEl.textContent = "Elegí fecha, horario y completá los campos obligatorios (los dos emails incluidos).";
+    errorEl.classList.add("show");
+    errorEl.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "Anotando...";
+
+  try{
+    if(!db) throw new Error("Firebase no está disponible");
+
+    const entry = {
+      nombre, tema, drive, curso, email1, email2,
+      horario: selectedHorario,
+      anotadoEl: new Date().toISOString()
+    };
+
+    const docRef = db.collection("signups").doc(selectedDate);
+    await db.runTransaction(async (t) => {
+      const snap = await t.get(docRef);
+      const data = snap.exists ? snap.data() : {};
+      if(data[selectedHorario]){
+        throw new Error("HORARIO_OCUPADO");
+      }
+      data[selectedHorario] = entry;
+      t.set(docRef, data);
+    });
+
+    const dObj = schedule.find(d => isoDate(d) === selectedDate);
+    document.getElementById("confirmDate").textContent = formatLong(dObj);
+    document.getElementById("confirmHorario").textContent = selectedHorario;
+    document.getElementById("confirmBox").classList.add("show");
+    document.getElementById("signupForm").reset();
+    errorEl.classList.remove("show");
+    document.getElementById("confirmBox").scrollIntoView({behavior:"smooth", block:"center"});
+
+    sendNotificationEmail(entry, formatLong(dObj));
+
+    selectedHorario = null;
+    renderChips();
+  }catch(err){
+    console.error("Error al anotar:", err);
+    if(err && err.message === "HORARIO_OCUPADO"){
+      errorEl.textContent = "Justo se ocupó ese horario. Elegí otro, por favor.";
+      renderSlots(selectedDate);
+    }else{
+      errorEl.textContent = "Hubo un problema al guardar (" + (err && err.message ? err.message : "error desconocido") + "). Probá de nuevo en unos segundos.";
+    }
+    errorEl.classList.add("show");
+    errorEl.scrollIntoView({behavior:"smooth", block:"center"});
+  }finally{
+    btn.disabled = false;
+    btn.textContent = "Anotarme";
+  }
+});
+
+// ============ ADMIN PANEL ============
+let adminUnlocked = false;
+
+document.getElementById("openAdmin").addEventListener("click", () => {
+  document.getElementById("overlay").classList.add("show");
+});
+document.getElementById("closeAdmin").addEventListener("click", () => {
+  document.getElementById("overlay").classList.remove("show");
+});
+document.getElementById("overlay").addEventListener("click", (e) => {
+  if(e.target.id === "overlay") document.getElementById("overlay").classList.remove("show");
+});
+
+document.getElementById("passSubmit").addEventListener("click", checkLogin);
+document.getElementById("passInput").addEventListener("keydown", (e) => { if(e.key === "Enter") checkLogin(); });
+document.getElementById("userInput").addEventListener("keydown", (e) => { if(e.key === "Enter") checkLogin(); });
+document.getElementById("logoutBtn").addEventListener("click", logout);
+
+function checkLogin(){
+  const usuario = document.getElementById("userInput").value.trim();
+  const clave = document.getElementById("passInput").value;
+  const passError = document.getElementById("passError");
+
+  if(usuario.toLowerCase() === ADMIN_USERNAME.toLowerCase() && clave === ADMIN_PASSWORD){
+    adminUnlocked = true;
+    document.getElementById("passGate").style.display = "none";
+    document.getElementById("adminBody").style.display = "block";
+    passError.classList.remove("show");
+    loadAdminData();
+  }else{
+    passError.classList.add("show");
+  }
+}
+
+function logout(){
+  adminUnlocked = false;
+  document.getElementById("userInput").value = "";
+  document.getElementById("passInput").value = "";
+  document.getElementById("passGate").style.display = "block";
+  document.getElementById("adminBody").style.display = "none";
+}
+
+document.getElementById("refreshBtn").addEventListener("click", loadAdminData);
+document.getElementById("copyBtn").addEventListener("click", copyAdminSummary);
+
+let lastSummaryText = "";
+
+async function loadAdminData(){
+  const list = document.getElementById("adminList");
+  list.innerHTML = "<p class='empty-note'>Cargando...</p>";
+  let summaryLines = [`Anotados — Profe Coto (actualizado ${new Date().toLocaleString("es-AR")})`, ""];
+
+  const blocks = [];
+  for(const d of schedule){
+    const iso = isoDate(d);
+    const map = await getSignupsForDate(iso);
+    const takenSlots = TIME_SLOTS.filter(s => map[s]);
+
+    summaryLines.push(`${formatLong(d)} — ${takenSlots.length}/${TIME_SLOTS.length} ocupados`);
+    takenSlots.forEach(slot => {
+      const p = map[slot];
+      summaryLines.push(`  · ${slot} — ${p.nombre} (${p.curso})`);
+      summaryLines.push(`    Tema: ${p.tema || "-"}`);
+      if(p.drive) summaryLines.push(`    Drive: ${p.drive}`);
+      summaryLines.push(`    Emails: ${p.email1}, ${p.email2}`);
+    });
+    summaryLines.push("");
+
+    const block = document.createElement("div");
+    block.className = "admin-date-block";
+    let entriesHtml = "";
+    if(takenSlots.length === 0){
+      entriesHtml = `<div class="empty-note">Todavía nadie se anotó.</div>`;
+    }else{
+      takenSlots.forEach(slot => {
+        const p = map[slot];
+        const driveLine = p.drive ? `<br>Drive: <a href="${escapeHtml(p.drive)}" target="_blank" rel="noopener">${escapeHtml(p.drive)}</a>` : "";
+        entriesHtml += `
+          <div class="admin-entry">
+            <div class="row1">
+              <div>
+                <div class="who"><span class="horario">${slot}</span> ${escapeHtml(p.nombre)} · ${escapeHtml(p.curso)}</div>
+                <div class="meta"><b>Tema:</b> ${escapeHtml(p.tema || "-")}${driveLine}<br><b>Emails:</b> ${escapeHtml(p.email1)}, ${escapeHtml(p.email2)}</div>
+              </div>
+              <button class="del" data-iso="${iso}" data-slot="${slot}">Quitar</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+    block.innerHTML = `
+      <div class="adhead">
+        <span>${formatLong(d)}</span>
+        <span class="adcount">${takenSlots.length}/${TIME_SLOTS.length}</span>
+      </div>
+      ${entriesHtml}
+    `;
+    blocks.push(block);
+  }
+
+  list.innerHTML = "";
+  blocks.forEach(b => list.appendChild(b));
+  list.querySelectorAll(".del").forEach(btn => {
+    btn.addEventListener("click", () => removeEntry(btn.dataset.iso, btn.dataset.slot));
+  });
+
+  lastSummaryText = summaryLines.join("\n");
+}
+
+async function removeEntry(iso, slot){
+  try{
+    if(!db) throw new Error("Firebase no disponible");
+    await db.collection("signups").doc(iso).update({
+      [slot]: firebase.firestore.FieldValue.delete()
+    });
+    loadAdminData();
+    renderChips();
+    if(selectedDate === iso) renderSlots(iso);
+  }catch(e){
+    console.error("Error al quitar:", e);
+    alert("No se pudo quitar. Probá de nuevo.");
+  }
+}
+
+function copyAdminSummary(){
+  navigator.clipboard.writeText(lastSummaryText).then(() => {
+    const btn = document.getElementById("copyBtn");
+    const original = btn.textContent;
+    btn.textContent = "¡Copiado!";
+    setTimeout(() => btn.textContent = original, 1500);
+  });
+}
+
+// ============ INIT ============
+if(!db){
+  const warn = document.getElementById("storageWarning");
+  if(warn) warn.style.display = "block";
+}
+renderNextCard();
+renderChips();
+</script>
+
+</body>
+</html>
