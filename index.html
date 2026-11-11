@@ -633,9 +633,9 @@ async function sendNotificationEmail(entry, fechaTexto){
 }
 
 // Primera consultoría y frecuencia (cada 14 días = "una vez sí, una vez no" los viernes)
-const START_DATE = new Date(2026, 7, 28); // 28 de agosto de 2026
+const START_DATE = new Date(2026, 10, 13); // viernes 13 de noviembre de 2026
 const INTERVAL_DAYS = 14;
-const HOW_MANY_DATES = 10;
+const HOW_MANY_DATES = 3; // 13/11, 27/11 y 11/12
 
 // Horarios: turnos de 30 minutos, de 15:30 a 19:30
 const TIME_SLOTS = ["15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00"];
